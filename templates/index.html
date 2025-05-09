@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monument Info</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Monument Description</h2>
+
+        {% if translated %}
+            <p id="text">{{ translated }}</p>
+        {% else %}
+            <p>No description available.</p>
+        {% endif %}
+
+        <!-- Language Selection -->
+        <form method="POST" class="language-buttons">
+            <p>Select Language:</p>
+            <button type="submit" name="language" value="en">English</button>
+            <button type="submit" name="language" value="fr">French</button>
+            <button type="submit" name="language" value="hi">Hindi</button>
+            <button type="submit" name="language" value="es">Spanish</button>
+        </form>
+
+        <!-- Audio Playback -->
+        {% if audio %}
+            <h4>Audio Playback:</h4>
+            <audio controls autoplay>
+                <source src="{{ audio }}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        {% endif %}
+
+        <!-- Chatbot Section -->
+        <hr>
+        <h3>Ask the Chatbot</h3>
+
+        <div class="card chat-wrapper">
+            <div class="chat-inner">
+                <div id="chat-box"></div>
+                <div class="chat-controls">
+                    <input type="text" id="chat-input" placeholder="Type your question..." />
+                    <div class="chat-buttons">
+                        <button onclick="sendMessage()">Send</button>
+                        <button id="toggle-voice" onclick="toggleVoice()">🔊 Voice On</button>
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
