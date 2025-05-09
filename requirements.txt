@@ -1,5 +1,5 @@
 Flask
-psycopg2-bianry
+psycopg2-binary
 gTTS
 googletrans==4.0.0rc1
 requests
