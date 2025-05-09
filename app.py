@@ -12,21 +12,24 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL = "llama3-8b-8192"
 
-# ---------- DATABASE CONFIG ----------
+# ---------- TEXT & TTS FUNCTIONS ----------
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 def init_db():
-    """Create the tts_text table if it doesn't exist."""
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS tts_text (
             id SERIAL PRIMARY KEY,
             content TEXT NOT NULL
-        );
+        )
     """)
+    cursor.execute("SELECT COUNT(*) FROM tts_text")
+    if cursor.fetchone()[0] == 0:
+        cursor.execute("INSERT INTO tts_text (content) VALUES (%s)", ("Easter Island, or Rapa Nui, is a remote volcanic island in the southeastern Pacific Ocean, part of Chile. It is world-famous for its massive stone statues called moai, created by the island’s early Polynesian inhabitants.
+                                                                      The moai are believed to represent ancestral figures and hold great cultural and spiritual meaning.
+                                                                      Today, Easter Island is a UNESCO World Heritage Site and a major archaeological and tourist destination.",))
     conn.commit()
-    cursor.close()
     conn.close()
 
 def fetch_text_from_db():
@@ -37,7 +40,6 @@ def fetch_text_from_db():
     conn.close()
     return result[0] if result else "No text found."
 
-# ---------- TRANSLATION & AUDIO ----------
 def translate_text(text, target_lang):
     translator = Translator()
     translated = translator.translate(text, src='en', dest=target_lang)
@@ -63,7 +65,7 @@ def home():
 
     return render_template("index.html", translated=translated_text, audio=audio_file)
 
-# ---------- CHATBOT ----------
+# ---------- CHATBOT ENDPOINT ----------
 @app.route("/chat", methods=["POST"])
 def chat():
     user_message = request.json.get("message", "")
@@ -91,7 +93,8 @@ def chat():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# ---------- RUN ----------
+# ---------- INIT DB ----------
+init_db()
+
 if __name__ == '__main__':
-    init_db()  # Ensure DB table is created
-    app.run(debug=True, port=5004)
+    app.run(debug=True)
