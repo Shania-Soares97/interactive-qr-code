@@ -1,20 +1,21 @@
 from flask import Flask, render_template, request, jsonify
-import sqlite3
 from googletrans import Translator
 from gtts import gTTS
 import requests
 import os
+import psycopg2
 
 app = Flask(__name__)
 
 # Chatbot Config
-GROQ_API_KEY = "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"
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL = "llama3-8b-8192"
 
 # ---------- TEXT & TTS FUNCTIONS ----------
+DATABASE_URL = os.getenv("DATABASE_URL")
 def fetch_text_from_db():
-    conn = sqlite3.connect("texts.db")
+    conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute("SELECT content FROM tts_text ORDER BY id DESC LIMIT 1")
     result = cursor.fetchone()
