@@ -26,9 +26,7 @@ def init_db():
     """)
     cursor.execute("SELECT COUNT(*) FROM tts_text")
     if cursor.fetchone()[0] == 0:
-        cursor.execute("INSERT INTO tts_text (content) VALUES (%s)", ("Easter Island, or Rapa Nui, is a remote volcanic island in the southeastern Pacific Ocean, part of Chile. It is world-famous for its massive stone statues called moai, created by the island’s early Polynesian inhabitants.
-                                                                      The moai are believed to represent ancestral figures and hold great cultural and spiritual meaning.
-                                                                      Today, Easter Island is a UNESCO World Heritage Site and a major archaeological and tourist destination.",))
+        cursor.execute("INSERT INTO tts_text (content) VALUES (%s)", ("Easter Island, or Rapa Nui, is a remote volcanic island in the southeastern Pacific Ocean, part of Chile. It is world-famous for its massive stone statues called moai, created by the island’s early Polynesian inhabitants. The moai are believed to represent ancestral figures and hold great cultural and spiritual meaning. Today, Easter Island is a UNESCO World Heritage Site and a major archaeological and tourist destination.",))
     conn.commit()
     conn.close()
 
