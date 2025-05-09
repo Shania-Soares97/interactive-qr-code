@@ -12,8 +12,23 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL = "llama3-8b-8192"
 
-# ---------- TEXT & TTS FUNCTIONS ----------
+# ---------- DATABASE CONFIG ----------
 DATABASE_URL = os.getenv("DATABASE_URL")
+
+def init_db():
+    """Create the tts_text table if it doesn't exist."""
+    conn = psycopg2.connect(DATABASE_URL)
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS tts_text (
+            id SERIAL PRIMARY KEY,
+            content TEXT NOT NULL
+        );
+    """)
+    conn.commit()
+    cursor.close()
+    conn.close()
+
 def fetch_text_from_db():
     conn = psycopg2.connect(DATABASE_URL)
     cursor = conn.cursor()
@@ -22,6 +37,7 @@ def fetch_text_from_db():
     conn.close()
     return result[0] if result else "No text found."
 
+# ---------- TRANSLATION & AUDIO ----------
 def translate_text(text, target_lang):
     translator = Translator()
     translated = translator.translate(text, src='en', dest=target_lang)
@@ -47,13 +63,13 @@ def home():
 
     return render_template("index.html", translated=translated_text, audio=audio_file)
 
-# ---------- CHATBOT ENDPOINT ----------
+# ---------- CHATBOT ----------
 @app.route("/chat", methods=["POST"])
 def chat():
     user_message = request.json.get("message", "")
 
     conversation = [
-        {"role": "system", "content": "You are a helpful assistant. Please keep your responses limited to 1 paragraph. Respond in the language you recieve the question in"},
+        {"role": "system", "content": "You are a helpful assistant. Please keep your responses limited to 1 paragraph. Respond in the language you receive the question in."},
         {"role": "user", "content": user_message}
     ]
 
@@ -75,5 +91,7 @@ def chat():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# ---------- RUN ----------
 if __name__ == '__main__':
+    init_db()  # Ensure DB table is created
     app.run(debug=True, port=5004)
