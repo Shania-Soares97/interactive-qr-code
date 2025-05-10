@@ -3,12 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monument Info</title>
+    <title>Easter Islands</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <div class="container">
-        <h2>Monument Description</h2>
+        <div class="main-heading">
+            <h2><span class="icon">🗿</span> Easter Island</h2>
+        </div>
+
+        <!-- Image after heading -->
+        <div class="image-container">
+            <img src="{{ url_for('static', filename='images/easter.png') }}" alt="Easter Island" class="main-image">
+        </div>
 
         {% if translated %}
             <p id="text">{{ translated }}</p>
@@ -18,7 +26,7 @@
 
         <!-- Language Selection -->
         <form method="POST" class="language-buttons">
-            <p>Select Language:</p>
+            <h3>Select Language:</h3>
             <button type="submit" name="language" value="en">English</button>
             <button type="submit" name="language" value="fr">French</button>
             <button type="submit" name="language" value="hi">Hindi</button>
@@ -27,7 +35,7 @@
 
         <!-- Audio Playback -->
         {% if audio %}
-            <h4>Audio Playback:</h4>
+            <h4>Audio Description: </h4>
             <audio controls autoplay>
                 <source src="{{ audio }}" type="audio/mpeg">
                 Your browser does not support the audio element.
@@ -37,7 +45,6 @@
         <!-- Chatbot Section -->
         <hr>
         <h3>Ask the Chatbot</h3>
-
         <div class="card chat-wrapper">
             <div class="chat-inner">
                 <div id="chat-box"></div>
@@ -51,7 +58,6 @@
             </div>
         </div>        
     </div>
-
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
